@@ -20,7 +20,11 @@ Die folgende Struktur bildet die Basis für das Elliott-Wave-Stock-Analyzer-Proj
 │       └── python-main-rules.mdc
 ├── data/
 │   ├── raw/
-│   └── cleaned/
+│   ├── cleaned/
+│   ├── exported/         # Exportierte Visualisierungen (PNG, HTML)
+│   ├── download.log      # Logfile für Daten-Downloads
+│   ├── cleaning.log      # Logfile für Datenbereinigung
+│   └── .gitkeep
 ├── src/
 │   ├── __init__.py
 │   ├── data_loader.py

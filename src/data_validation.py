@@ -7,20 +7,29 @@ import logging
 
 def load_raw_data(raw_dir: str) -> List[Tuple[str, pd.DataFrame]]:
     """Lädt alle CSV-Dateien aus dem Rohdatenordner und gibt eine Liste von (Ticker, DataFrame) zurück.
-    Entfernt automatisch fehlerhafte Header-/Tickerzeilen."""
+    Entfernt automatisch fehlerhafte Header-/Tickerzeilen und alle Zeilen, in denen numerische Spalten nicht numerisch sind."""
     data = []
+    print(f"[DEBUG] Lade Daten aus Verzeichnis: {raw_dir}")
     for file in os.listdir(raw_dir):
         if file.endswith('.csv'):
+            print(f"[DEBUG] Verarbeite Datei: {file}")
             ticker = file.replace('.csv', '')
-            df = pd.read_csv(os.path.join(raw_dir, file), index_col=0, parse_dates=True, dayfirst=False, infer_datetime_format=True)
+            df = pd.read_csv(os.path.join(raw_dir, file), index_col=0)
+            df.index = pd.to_datetime(df.index, format="%Y-%m-%d", errors="coerce")
+            print(f"[DEBUG] Ursprüngliche Zeilen: {len(df)}")
             # Entferne alle Zeilen, deren Index kein Datum ist
             df = df[pd.to_datetime(df.index, errors='coerce').notna()]
-            # Entferne alle Zeilen, in denen numerische Spalten nicht numerisch sind
-            num_cols = df.select_dtypes(include=[np.number]).columns
-            for col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
+            print(f"[DEBUG] Nach Index-Filter: {len(df)}")
+            # Versuche, alle numerischen Spalten zu erzwingen
+            for col in ['Close', 'Open', 'High', 'Low', 'Volume', 'Price']:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+            # Entferne alle Zeilen, in denen eine der numerischen Spalten nicht numerisch ist
+            num_cols = [col for col in ['Close', 'Open', 'High', 'Low', 'Volume', 'Price'] if col in df.columns]
             df = df.dropna(subset=num_cols, how='any')
+            print(f"[DEBUG] Nach numerischem Filter: {len(df)}")
             data.append((ticker, df))
+    print(f"[DEBUG] Fertig mit Laden aller Dateien.")
     return data
 
 

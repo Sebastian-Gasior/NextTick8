@@ -9,66 +9,105 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
 
 ---
 
-## Projektphasen (Übersicht)
+## Projekt Bilder
 
-1. **Initialisierung & Projektstruktur**  
-    Grundstruktur, Setup, Ordner, uv, Memory-Bank, README.md
+![Elliott-Wave-Stock-Analyzer](project-images/Elliott-Wave-Stock-Analyzer.png)
 
-2. **Datendownload & Rohdaten-Management**  
-    - Laden von Yahoo-Finance-Daten gemäß stocks.txt  
-    - Speicherung als CSV im `data/raw/`-Ordner  
-    - Fehler- und Lückenprüfung, Logging der Ergebnisse
-
-3. **Datenvalidierung & Bereinigung**  
-    - Prüfung auf Inkonsistenzen: fehlende/duplizierte Zeitstempel, Ausreißer, NaNs  
-    - Automatische Bereinigung: Interpolation, Ausreißerfilter (z-Score, IQR, Hampel)  
-    - Speicherung bereinigter Daten in `data/cleaned/`  
-    - Protokollierung aller Korrekturen
-
-4. **Peak/Trough Detection**  
-    - Glättung (Moving Average, Savitzky-Golay)  
-    - Robuste lokale Extremwerterkennung mit einstellbaren Parametern  
-    - Tests auf verschiedenen Aktienreihen
-
-5. **Elliott-Wave-Heuristik & Zählung**  
-    - Zuordnung von Wendepunkten zu Impuls- und Korrekturwellen  
-    - Einhaltung zentraler Elliott-Regeln (z.B. Welle 3 nie kürzeste)  
-    - Nutzung ggf. externer Open-Source-Module
-
-6. **Visualisierung (Streamlit GUI)**  
-    - Ein File: Anzeige Kurs, Hochs/Tiefs, Wellenlabels, Prognosepfeile  
-    - Parameteranpassung, Aktienliste neuladen, Export als HTML/PNG
-
-7. **Export & Sharing**  
-    - Exportfunktion für interaktive Ergebnisse  
-    - Exportierte Ergebnisse in eigenen Ordner ablegen
-
-8. **Test, Stabilisierung & Dokumentation**  
-    - Unittests, Integrationstests  
-    - Zuordnung aller Tests in `tests/phaseX/`  
-    - Aktualisierung von README und Memory-Bank
-
-9. **Präsentation, Deployment & Ausblick**  
-    - Demo-Script, Projektvorstellung  
-    - Hinweise zur ML-Erweiterung, Deployment (z.B. auf netcup)  
-    - Abschlussprotokoll
 
 ---
 
-## Projektstand (Phase 6 abgeschlossen)
+## Legende & Hilfe
 
-- Interaktive Streamlit-App (app.py) implementiert
-- Visualisierung von Kurs, Glättung, Peaks/Troughs, Wellenlabels, Prognosepfeilen
-- Parameteranpassung, Aktienliste-Reload, Datenaktualisierung direkt in der App
-- Export als PNG und HTML integriert
-- Alle Tests bestanden, App lauffähig
+### Legende
+- **Kurs:** Originaler Schlusskurs der Aktie (blaue Linie)
+- **Glättung:**
+  - **ma**: Moving Average (gleitender Durchschnitt)
+  - **savgol**: Savitzky-Golay-Filter (polynomiale Glättung)
+- **Peaks:** Lokale Hochpunkte (grüne Dreiecke)
+- **Troughs:** Lokale Tiefpunkte (rote Dreiecke)
+- **Zukunft (echt):** Tatsächlicher Kursverlauf nach dem gewählten Enddatum (graue Linie)
+- **Prognose Abwärts (Elliott):** Roter Pfeil – prognostizierte Korrekturwelle gemäß Elliott-Logik
+- **Prognose Aufwärts (Elliott):** Grüner Pfeil – prognostizierte Erholungswelle gemäß Elliott-Logik
+
+### Parameter
+- **Glättungsfenster:** Größe des Fensters für die Glättung (Anzahl Tage)
+- **Savitzky-Golay Ordnung:** Grad des Polynoms für Savitzky-Golay
+- **Peak-Prominenz:** Mindesthöhe, damit ein Peak erkannt wird
+- **Peak-Mindestabstand:** Mindestabstand zwischen Peaks
+- **Start-/Enddatum:** Zeitraum für die Analyse
+- **Prognosezeitraum:** Länge der Prognose in Tagen
+
+### Funktionsweise
+1. Echte Yahoo-Finance-Daten werden geladen und bereinigt.
+2. Die Zeitreihe wird geglättet ("ma" oder "savgol").
+3. Peaks und Troughs werden erkannt.
+4. Die Elliott-Wellen werden heuristisch gezählt.
+5. Prognosepfeile werden auf Basis der letzten echten Wellen berechnet.
+6. Die echte Kursentwicklung nach dem Enddatum wird als Vergleich angezeigt.
+
+### Hinweise
+- Die Prognose ist keine Finanzberatung, sondern eine algorithmische Projektion nach Elliott-Heuristik.
+- Alle Daten sind original von Yahoo Finance.
+- Die App bietet einen Export als PNG und HTML direkt aus der Oberfläche.
+- Über die Hilfe/Legende in der App erhältst du jederzeit eine Übersicht aller Funktionen und Begriffe.
+
+## Projektstand (Phase 7 abgeschlossen)
+
+- Export & Sharing (PNG/HTML) integriert
+- Nutzerführung und Hilfebereich in der App
+- Alle bisherigen Features und Tests lauffähig
 
 **Nächste Phase:**
-Export & Sharing (Phase 7)
+Test, Stabilisierung & Dokumentation (Phase 8)
 
-## Setup & Nutzung
+
+## Installation & Ausführung
+
+Das Projekt ist auf GitHub verfügbar: [https://github.com/Sebastian-Gasior/NextTick8](https://github.com/Sebastian-Gasior/NextTick8)
+
+### Voraussetzungen
+- Python 3.9+
+- [uv](https://github.com/astral-sh/uv) (für schnelle, moderne Python-Umgebungen)
+- Git
+
+### Schritt-für-Schritt-Anleitung
 
 ```bash
-uv venv
-uv pip install -r requirements.txt
-streamlit run app.py
+# 1. Repository klonen
+ git clone https://github.com/Sebastian-Gasior/NextTick8.git
+ cd NextTick8
+
+# 2. Virtuelle Umgebung mit uv erstellen
+ uv venv
+
+# 3. Abhängigkeiten installieren
+ uv pip install -r requirements.txt
+
+# 4. App starten
+ streamlit run app.py
+```
+
+Die App ist dann unter http://localhost:8501 erreichbar.
+
+### requirements.txt – Modulübersicht
+
+**Daten & Analyse:**
+- `yfinance` – Download von Aktienkursen direkt von Yahoo Finance
+- `pandas` – Datenmanipulation und -analyse
+- `numpy` – Numerische Berechnungen, Arrays
+- `scipy` – Signalverarbeitung, Peak-Detection, Statistik
+
+**Visualisierung:**
+- `streamlit` – Interaktive Web-App und GUI
+- `matplotlib` – Plotting (intern für einige Analysen)
+- `plotly` – Interaktive Visualisierung der Kursdaten und Prognosen
+
+**Machine Learning & Statistik:**
+- `scikit-learn` – (Vorbereitet) für spätere ML-Modelle, z.B. Klassifikation, Regression
+
+**Testing:**
+- `pytest` – Test-Framework für Unittests und Integrationstests
+
+**Utilities:**
+- `pillow` – Bildverarbeitung (z.B. für PNG-Export)
+- `python-dotenv` – Laden von Umgebungsvariablen aus .env-Dateien
