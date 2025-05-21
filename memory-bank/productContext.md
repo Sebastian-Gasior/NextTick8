@@ -1,4 +1,4 @@
-# productContext.md
+# productContext.md 
 
 ## Warum dieses Projekt?
 Um Aktienanalysen per Elliott-Wellen-Methode verlässlich, nachvollziehbar und effizient automatisiert zu erzeugen.

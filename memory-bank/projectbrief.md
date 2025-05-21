@@ -1,4 +1,4 @@
-# projectbrief.md
+# projectbrief.md 
 
 ## Projektname
 Elliott-Wave-Stock-Analyzer

@@ -1,8 +1,43 @@
-# activeContext.md
+# activeContext.md 
 
 ## Aktueller Fokus
+
+**Abgeschlossen:**
 - Phase 1: Initialisierung & Projektstruktur
-- Einrichtung: Grundstruktur, uv-Setup, README, stocks.txt, memory-bank-Files
+  - Alle Basisordner und -dateien angelegt
+  - Memory-Bank und Dokumentation aktualisiert
+- Phase 2: Datendownload & Rohdaten-Management
+  - Laden von Yahoo-Finance-Daten gemäß stocks.txt
+  - Speicherung als CSV in data/raw
+  - Fehler- und Lückenprüfung, Logging der Ergebnisse
+- Phase 3: Datenvalidierung & Bereinigung
+  - Validierungs- und Bereinigungslogik für Kursdaten implementiert
+  - Automatische Erkennung und Korrektur von Lücken, Duplikaten, NaN, Ausreißern (z-Score, IQR, Hampel)
+  - Alle Unittests und Integrationstests bestanden
+- Phase 4: Peak/Trough Detection
+  - Glättung der Kursdaten (Moving Average, Savitzky-Golay) implementiert
+  - Robuste Peak/Trough Detection mit Scipy (Prominenz, Abstand, Randerkennung)
+  - End-to-End-Tests und Unittests für verschiedene Szenarien bestanden
+- Phase 5: Elliott-Wave-Heuristik & Zählung
+  - Heuristische Elliott-Wellen-Zählung (Impuls- und Korrekturwellen) implementiert
+  - Zentrale Regeln (Welle 3 nie kürzeste, Welle 4 überschneidet Welle 1 nicht, ABC-Korrektur) werden eingehalten
+  - End-to-End-Tests und Unittests für Wellenzählung bestanden
+- Phase 6: Visualisierung (Streamlit GUI)
+  - Interaktive Streamlit-App (app.py) implementiert
+  - Visualisierung von Kurs, Glättung, Peaks/Troughs, Wellenlabels, Prognosepfeilen
+  - Parameteranpassung, Aktienliste-Reload, Datenaktualisierung direkt in der App
+  - Export als PNG und HTML integriert
+  - Alle Tests bestanden, App lauffähig
+
+**Aktueller Fokus:**
+- Phase 7: Export & Sharing
+  - Exportfunktion für interaktive Ergebnisse
+  - Exportierte Ergebnisse in eigenen Ordner ablegen
+
+**Nächste Aufgaben:**
+- Export- und Sharing-Logik prüfen und ggf. erweitern
+- Dokumentation der Exportmöglichkeiten
+- Test und Validierung der Exportfunktionen
 
 ## Letzte Änderungen
 - Projektverzeichnis erstellt

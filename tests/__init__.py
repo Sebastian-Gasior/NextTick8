@@ -1,0 +1,1 @@
+# tests-Paket für Elliott-Wave-Stock-Analyzer 

@@ -1,4 +1,4 @@
-# techContext.md
+# techContext.md 
 
 ## Technologien
 - Python 3.10+

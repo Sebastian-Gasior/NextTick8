@@ -1,0 +1,1 @@
+# Testpaket für Phase 5: Elliott-Wave-Heuristik & Zählung 
