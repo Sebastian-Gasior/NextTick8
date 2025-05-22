@@ -8,4 +8,6 @@ plotly
 scikit-learn
 pillow
 pytest
-python-dotenv 
+python-dotenv
+joblib
+backtrader 

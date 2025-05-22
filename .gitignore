@@ -176,9 +176,21 @@ data/
 
 
 # Ordner
-.cursor/
+.cursor/*
 .cursor
+.cursor*
 .uvenv/
 Bilder/
-memory-bank/
+
+
+# Dateien
 README4ME.md
+.gitignore
+
+memory-bank/
+memory-bank/activeContext.md
+memory-bank/productContext.md
+memory-bank/progress.md
+memory-bank/projectbrief.md
+memory-bank/systemPatterns.md
+memory-bank/techContext.md

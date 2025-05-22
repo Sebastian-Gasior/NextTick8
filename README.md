@@ -11,31 +11,16 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
 
 ## Projekt Bilder
 
-![Elliott-Wave-Stock-Analyzer](project-images/Elliott-Wave-Stock-Analyzer.png)
+![Elliott-Wave-Stock-Analyzer](project-images/Bild1-Elliot-Wave-Stock-Analyzer.png)
 
+![Preis & Volumen](project-images/Bild2-Preis-Volumen.png)
+
+![Technische Analyse](project-images/Bild3-Technische-Analyse.png)
+
+![ML-Vorhersage (LSTM)](project-images/Bild4-ML-Vorhersage-LSTM.png)
 
 ---
 
-## Legende & Hilfe
-
-### Legende
-- **Kurs:** Originaler Schlusskurs der Aktie (blaue Linie)
-- **Glättung:**
-  - **ma**: Moving Average (gleitender Durchschnitt)
-  - **savgol**: Savitzky-Golay-Filter (polynomiale Glättung)
-- **Peaks:** Lokale Hochpunkte (grüne Dreiecke)
-- **Troughs:** Lokale Tiefpunkte (rote Dreiecke)
-- **Zukunft (echt):** Tatsächlicher Kursverlauf nach dem gewählten Enddatum (graue Linie)
-- **Prognose Abwärts (Elliott):** Roter Pfeil – prognostizierte Korrekturwelle gemäß Elliott-Logik
-- **Prognose Aufwärts (Elliott):** Grüner Pfeil – prognostizierte Erholungswelle gemäß Elliott-Logik
-
-### Parameter
-- **Glättungsfenster:** Größe des Fensters für die Glättung (Anzahl Tage)
-- **Savitzky-Golay Ordnung:** Grad des Polynoms für Savitzky-Golay
-- **Peak-Prominenz:** Mindesthöhe, damit ein Peak erkannt wird
-- **Peak-Mindestabstand:** Mindestabstand zwischen Peaks
-- **Start-/Enddatum:** Zeitraum für die Analyse
-- **Prognosezeitraum:** Länge der Prognose in Tagen
 
 ### Funktionsweise
 1. Echte Yahoo-Finance-Daten werden geladen und bereinigt.
@@ -51,15 +36,11 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
 - Die App bietet einen Export als PNG und HTML direkt aus der Oberfläche.
 - Über die Hilfe/Legende in der App erhältst du jederzeit eine Übersicht aller Funktionen und Begriffe.
 
-## Projektstand (Phase 7 abgeschlossen)
 
-- Export & Sharing (PNG/HTML) integriert
-- Nutzerführung und Hilfebereich in der App
-- Alle bisherigen Features und Tests lauffähig
-
-**Nächste Phase:**
-Test, Stabilisierung & Dokumentation (Phase 8)
-
+ ### Projektstand (Mai 2025):
+- Elliott-Wellen-Analyse, TA, ML-Vorhersage und Backtesting sind voll funktionsfähig und robust.
+- Die ML-Pipeline ist wissenschaftlich fundiert, fehlertolerant und für produktiven Einsatz geeignet.
+- Weitere Features (Feature-Engineering, Klassifikation, automatische Parameterempfehlung) können einfach ergänzt werden.
 
 ## Installation & Ausführung
 
@@ -111,3 +92,117 @@ Die App ist dann unter http://localhost:8501 erreichbar.
 **Utilities:**
 - `pillow` – Bildverarbeitung (z.B. für PNG-Export)
 - `python-dotenv` – Laden von Umgebungsvariablen aus .env-Dateien
+
+## Troubleshooting & FAQ
+
+### Häufige Fehler & Lösungen
+
+- **Keine Daten angezeigt / Plot leer:**
+  - Prüfe, ob die Daten für den gewählten Zeitraum und Ticker vorhanden sind.
+  - Nutze ggf. "Daten aktualisieren" in der App.
+  - Achte auf korrekte Schreibweise im stocks.txt.
+
+- **Fehlermeldung beim Daten-Download:**
+  - Internetverbindung prüfen.
+  - Ticker ggf. nicht mehr bei Yahoo Finance verfügbar.
+
+- **Prognose weicht stark vom echten Verlauf ab:**
+  - Die Prognose basiert auf heuristischen Elliott-Wellen und ist keine exakte Vorhersage.
+  - Starke Marktbewegungen oder News können nicht abgebildet werden.
+
+- **Export funktioniert nicht:**
+  - Stelle sicher, dass der Ordner `data/exported/` existiert und beschreibbar ist.
+  - Prüfe, ob alle Abhängigkeiten installiert sind (insb. pillow, plotly).
+
+### FAQ
+
+**Wie genau ist die Prognose?**
+- Die Prognose ist eine algorithmische Projektion auf Basis der letzten echten Wellen. Sie dient der Visualisierung, nicht als Finanzberatung.
+
+**Welche Daten werden verwendet?**
+- Es werden ausschließlich echte Yahoo-Finance-Daten genutzt (über yfinance).
+
+**Wie kann ich eigene Aktien hinzufügen?**
+- Einfach den Ticker in die stocks.txt eintragen und "Daten aktualisieren" klicken.
+
+**Was ist der Unterschied zwischen "ma" und "savgol"?**
+- "ma": Gleitender Durchschnitt, robust, glättet stark.
+- "savgol": Savitzky-Golay-Filter, erhält Peaks/Troughs besser, ideal für Elliott-Wellen.
+
+**Wie kann ich die Visualisierung exportieren?**
+- Über die Buttons "Plot als PNG/HTML speichern" in der App.
+
+**Kann ich die App auf einem Server deployen?**
+- Ja, z.B. mit Streamlit Cloud, netcup, oder jedem Server mit Python 3.9+ und uv.
+
+
+## ML-Integration & Zeitreihenmodelle
+
+### Überblick
+
+- Das Projekt enthält eine **vollständige ML-Pipeline** für Zeitreihenprognosen und Backtests mit echten Aktienkursen.
+- **Stand Mai 2025:**
+    - **Robuste Datenvalidierung:** Vor jedem Training und nach jedem Split werden Preisdaten auf Nullen, negative Werte und NaN/Inf geprüft. Training findet nur mit validen Daten statt.
+    - **Numerische Fehlerbehandlung:** Schutz vor Division durch 0 und ungültigen Werten in allen ML-Kernfunktionen. Fehler wie "divide by zero" werden proaktiv verhindert.
+    - **Persistente Prognosen:** Prognosen, Modelle, Scaler und Logs werden eindeutig pro Ticker und Modellkonfiguration gespeichert und beim Start automatisch geladen.
+    - **Hyperparameter-Tuning:** Randomized Search ist robust gegen fehlerhafte Parameter und bricht mit klarer Fehlermeldung ab, falls kein Modell trainiert werden kann.
+    - **User-Feedback:** Jede Fehlerursache (z.B. zu wenig Daten, schlechte Parameter, fehlerhafte Preisdaten) wird klar im UI kommuniziert.
+    - **Visualisierung:** Prognose und Loss-Kurve werden immer angezeigt, sofern valide. Performance-Metriken werden berechnet und angezeigt.
+    - **Backtesting:** TA- und ML-Strategien können verglichen werden, inklusive Performance-Kennzahlen und Download-Optionen.
+- Alle Modelle (insb. LSTM) werden ausschließlich auf validierten Kursdaten aus `data/cleaned/` trainiert und evaluiert.
+- Die ML-Module sind in `src/ml/` gekapselt und modular aufgebaut:
+    - `time_split.py`: Walk-Forward- und Out-of-Sample-Splits
+    - `feature_engineering.py`: Technische Indikatoren (MA, RSI, ...)
+    - `model_training.py`: LSTM-Training und Prognose (Keras/TensorFlow)
+    - `backtest_simulation.py`: Backtesting von ML-Signalen
+    - `metrics.py`: Sharpe, Drawdown, Hit Ratio
+    - `plots.py`: Visualisierung von Equity und Prognosen
+    - `allocation.py`: Portfolio-Gewichtung
+    - `long_term_simulation.py`: Langfrist-Simulationen
+- Alle ML-Tests liegen in `tests/ml/` und decken die gesamte Pipeline ab (inkl. End-to-End-Test).
+
+---
+
+### Troubleshooting (ML)
+
+- **Fehler: "divide by zero encountered in scalar divide"**  
+  → Die Preisdaten enthalten Nullen, negative Werte oder NaN. Bitte Datenbasis prüfen und ggf. neu laden.
+- **Fehler: "Randomized Search: Kein valides Modell gefunden"**  
+  → Zu wenig Daten, zu große Fenstergröße oder ungeeignete Hyperparameter. Bitte Parameter anpassen und Datenbasis prüfen.
+- **Fehler: "Zu wenig Daten für die gewählte Fenstergröße"**  
+  → Fenstergröße verkleinern oder mehr Daten verwenden.
+- **Fehler: "Preisdaten enthalten NaN/negative Werte"**  
+  → Datenbasis prüfen, ggf. Daten neu laden oder Ticker wechseln.
+
+#### Empfohlene Vorgehensweise bei ML-Problemen
+1. **Datenbasis prüfen:**  
+   Mindestens 500 Börsentage, keine Nullen/NaN/negative Werte.
+2. **Fenstergröße sinnvoll wählen:**  
+   Nicht größer als 1/10 der Datenbasis.
+3. **Dropout und Epochen moderat wählen:**  
+   Dropout 0.1–0.3, Epochen 10–30.
+4. **Fehlermeldungen beachten:**  
+   Die App gibt immer einen klaren Hinweis, was zu tun ist.
+
+---
+
+## Legende & Hilfe
+
+### Legende
+- **Kurs:** Originaler Schlusskurs der Aktie (blaue Linie)
+- **Glättung:**
+  - **ma**: Moving Average (gleitender Durchschnitt)
+  - **savgol**: Savitzky-Golay-Filter (polynomiale Glättung)
+- **Peaks:** Lokale Hochpunkte (grüne Dreiecke)
+- **Troughs:** Lokale Tiefpunkte (rote Dreiecke)
+- **Zukunft (echt):** Tatsächlicher Kursverlauf nach dem gewählten Enddatum (graue Linie)
+- **Prognose Abwärts (Elliott):** Roter Pfeil – prognostizierte Korrekturwelle gemäß Elliott-Logik
+- **Prognose Aufwärts (Elliott):** Grüner Pfeil – prognostizierte Erholungswelle gemäß Elliott-Logik
+
+### Parameter
+- **Glättungsfenster:** Größe des Fensters für die Glättung (Anzahl Tage)
+- **Savitzky-Golay Ordnung:** Grad des Polynoms für Savitzky-Golay
+- **Peak-Prominenz:** Mindesthöhe, damit ein Peak erkannt wird
+- **Peak-Mindestabstand:** Mindestabstand zwischen Peaks
+- **Start-/Enddatum:** Zeitraum für die Analyse
+- **Prognosezeitraum:** Länge der Prognose in Tagen

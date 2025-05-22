@@ -30,7 +30,17 @@ Die folgende Struktur bildet die Basis für das Elliott-Wave-Stock-Analyzer-Proj
 │   ├── data_loader.py
 │   ├── data_validation.py
 │   ├── peak_detection.py
-│   └── elliott_wave.py
+│   ├── elliott_wave.py
+│   └── ml/
+│       ├── __init__.py
+│       ├── time_split.py
+│       ├── feature_engineering.py
+│       ├── model_training.py
+│       ├── backtest_simulation.py
+│       ├── metrics.py
+│       ├── plots.py
+│       ├── allocation.py
+│       └── long_term_simulation.py
 ├── tests/
 │   ├── __init__.py
 │   ├── phase2/
@@ -45,11 +55,18 @@ Die folgende Struktur bildet die Basis für das Elliott-Wave-Stock-Analyzer-Proj
 │   └── phase5/
 │       ├── __init__.py
 │       └── test_elliott_wave.py
+│   └── ml/
+│       ├── __init__.py
+│       ├── test_time_split.py
+│       ├── test_feature_engineering.py
+│       ├── test_model_training.py
+│       ├── test_backtest_simulation.py
+│       ├── test_metrics.py
+│       ├── test_plots.py
+│       ├── test_allocation.py
+│       ├── test_long_term_simulation.py
+│       └── test_e2e.py
 ├── stocks.txt
 ├── requirements.txt
 ├── app.py
-```
-
-## Noch anzulegende Dateien/Ordner (Phase 5)
-- src/elliott_wave.py
-- tests/phase5/ 
+``` 
