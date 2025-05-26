@@ -7,17 +7,6 @@ Die folgende Struktur bildet die Basis für das Elliott-Wave-Stock-Analyzer-Proj
 ├── README.md
 ├── .gitignore
 ├── LICENSE
-├── memory-bank/
-│   ├── projectbrief.md
-│   ├── productContext.md
-│   ├── techContext.md
-│   ├── systemPatterns.md
-│   ├── activeContext.md
-│   └── progress.md
-├── .cursor/
-│   └── rules/
-│       ├── memory-bank.mdc
-│       └── python-main-rules.mdc
 ├── data/
 │   ├── raw/
 │   ├── cleaned/

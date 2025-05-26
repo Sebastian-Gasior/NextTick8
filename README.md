@@ -39,7 +39,7 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
 - Über die Hilfe/Legende in der App erhältst du jederzeit eine Übersicht aller Funktionen und Begriffe.
 
 
- ### Projektstand (Mai 2025):
+ ### Projektstand:
 - Elliott-Wellen-Analyse, TA, ML-Vorhersage und Backtesting sind voll funktionsfähig und robust.
 - Die ML-Pipeline ist wissenschaftlich fundiert, fehlertolerant und für produktiven Einsatz geeignet.
 - TA- und ML-Strategien können im Overlay direkt verglichen werden (Equity, Drawdown, Metriken, Download-Reports).
@@ -92,6 +92,7 @@ Die App ist dann unter http://localhost:8501 erreichbar.
 
 **Machine Learning & Statistik:**
 - `scikit-learn` – (Vorbereitet) für spätere ML-Modelle, z.B. Klassifikation, Regression
+- `keras`, `tensorflow` – Für LSTM-Modelle (werden im ML-Teil verwendet)
 
 **Testing:**
 - `pytest` – Test-Framework für Unittests und Integrationstests
@@ -142,6 +143,9 @@ Die App ist dann unter http://localhost:8501 erreichbar.
 **Kann ich die App auf einem Server deployen?**
 - Ja, z.B. mit Streamlit Cloud, netcup, oder jedem Server mit Python 3.9+ und uv.
 
+**Wo finde ich die Backtesting-Reports?**
+- Alle Backtesting-Reports (CSV/HTML) werden im Ordner `backtest/reports/` gespeichert und können direkt aus der App heruntergeladen werden.
+
 
 ## ML-Integration & Zeitreihenmodelle
 
@@ -191,30 +195,6 @@ Die App ist dann unter http://localhost:8501 erreichbar.
 4. **Fehlermeldungen beachten:**  
    Die App gibt immer einen klaren Hinweis, was zu tun ist.
 
----
-
-## Legende & Hilfe
-
-### Legende
-- **Kurs:** Originaler Schlusskurs der Aktie (blaue Linie)
-- **Glättung:**
-  - **ma**: Moving Average (gleitender Durchschnitt)
-  - **savgol**: Savitzky-Golay-Filter (polynomiale Glättung)
-- **Peaks:** Lokale Hochpunkte (grüne Dreiecke)
-- **Troughs:** Lokale Tiefpunkte (rote Dreiecke)
-- **Zukunft (echt):** Tatsächlicher Kursverlauf nach dem gewählten Enddatum (graue Linie)
-- **Prognose Abwärts (Elliott):** Roter Pfeil – prognostizierte Korrekturwelle gemäß Elliott-Logik
-- **Prognose Aufwärts (Elliott):** Grüner Pfeil – prognostizierte Erholungswelle gemäß Elliott-Logik
-
-### Parameter
-- **Glättungsfenster:** Größe des Fensters für die Glättung (Anzahl Tage)
-- **Savitzky-Golay Ordnung:** Grad des Polynoms für Savitzky-Golay
-- **Peak-Prominenz:** Mindesthöhe, damit ein Peak erkannt wird
-- **Peak-Mindestabstand:** Mindestabstand zwischen Peaks
-- **Start-/Enddatum:** Zeitraum für die Analyse
-- **Prognosezeitraum:** Länge der Prognose in Tagen
-
----
 
 ## Mögliche zukünftige Erweiterungen
 
