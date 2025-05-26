@@ -253,18 +253,31 @@ def random_search_lstm(df: pd.DataFrame, param_dist: dict, n_iter: int = 10, win
     return best_model, best_scaler, best_log
 
 def generate_ml_signals(df: pd.DataFrame, ticker: str, window: int = 20) -> pd.Series:
-    """Erzeugt ML-Signale (1=Long, 0=Flat) auf Basis der Preisprognose (rekonstruierte Preise)."""
+    """Erzeugt ML-Signale (1=Long, 0=Flat) auf Basis der Preisprognose (rekonstruierte Preise).
+    Die Signale werden nur für den Testzeitraum (letzte 15% der Daten) generiert, Rest = 0.
+    Gibt eine Serie mit gleicher Länge wie df zurück.
+    """
     loaded = load_lstm_model(ticker)
     if loaded is None:
+        print("[ML-Signale] Modell konnte nicht geladen werden!")
         return pd.Series([0]*len(df), index=df.index)
     model, scaler, _ = loaded  # log wird nicht benötigt
+    n = len(df)
+    val_end = int(n * 0.85)
+    test_len = n - val_end
     close_scaled = scaler.transform(df["Close"].values.reshape(-1, 1)).flatten()
-    # Startpreis: letzter bekannter Preis
-    start_price = df["Close"].values[-1]
-    preds = predict_lstm(model, scaler, close_scaled, window=window, steps=len(df), start_price=start_price, return_prices=True)
-    # Signal: 1 wenn Preisprognose > aktuellem Kurs, sonst 0
-    signals = (preds > df["Close"].values[-len(preds):]).astype(int)
-    return pd.Series(signals, index=df.index[-len(preds):])
+    start_price = df["Close"].values[val_end-1] if val_end > 0 else df["Close"].values[0]
+    preds = predict_lstm(model, scaler, close_scaled, window=window, steps=test_len, start_price=start_price, return_prices=True)
+    # Signal: 1 wenn Preisprognose > aktuellem Kurs, sonst 0 (nur für Testzeitraum)
+    test_close = df["Close"].values[val_end:]
+    signals_test = (preds > test_close).astype(int)
+    # Rest mit 0 auffüllen
+    signals = np.zeros(n, dtype=int)
+    signals[-test_len:] = signals_test
+    print(f"[ML-Signale] preds: {preds[:10]}")
+    print(f"[ML-Signale] signals_test: {signals_test[:10]}")
+    print(f"[ML-Signale] signals (gesamt): {signals[:20]}")
+    return pd.Series(signals, index=df.index)
 
 def test_reconstruction(prices: np.ndarray) -> dict:
     """

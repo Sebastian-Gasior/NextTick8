@@ -40,7 +40,14 @@ Die folgende Struktur bildet die Basis für das Elliott-Wave-Stock-Analyzer-Proj
 │       ├── metrics.py
 │       ├── plots.py
 │       ├── allocation.py
-│       └── long_term_simulation.py
+│       ├── long_term_simulation.py
+│       └── backtrader_engine.py   # Backtesting-Engine für TA/ML-Strategien
+├── backtest/
+│   └── reports/
+│       ├── ta_backtest.csv
+│       ├── ta_backtest.html
+│       ├── ml_backtest.csv
+│       └── ml_backtest.html
 ├── tests/
 │   ├── __init__.py
 │   ├── phase2/

@@ -19,6 +19,8 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
 
 ![ML-Vorhersage (LSTM)](project-images/Bild4-ML-Vorhersage-LSTM.png)
 
+![Strategie-Vergleich & Backtesting](project-images/Bild5-Strategie-Vergleich-Backtesting.png)
+
 ---
 
 
@@ -40,6 +42,11 @@ Die Implementierung ist vollständig modular, testgetrieben und für spätere ML
  ### Projektstand (Mai 2025):
 - Elliott-Wellen-Analyse, TA, ML-Vorhersage und Backtesting sind voll funktionsfähig und robust.
 - Die ML-Pipeline ist wissenschaftlich fundiert, fehlertolerant und für produktiven Einsatz geeignet.
+- TA- und ML-Strategien können im Overlay direkt verglichen werden (Equity, Drawdown, Metriken, Download-Reports).
+- Backtesting-Reports werden als CSV/HTML exportiert (backtest/reports/).
+- Feature-Engineering, TA-Export und Visualisierung sind integriert.
+- Die Buy&Hold-Kurve wurde aus dem Strategie-Vergleich entfernt (nur noch TA/ML-Vergleich).
+- Alle relevanten Tests (ML, Feature Engineering, Backtest) laufen fehlerfrei.
 - Weitere Features (Feature-Engineering, Klassifikation, automatische Parameterempfehlung) können einfach ergänzt werden.
 
 ## Installation & Ausführung
@@ -206,3 +213,20 @@ Die App ist dann unter http://localhost:8501 erreichbar.
 - **Peak-Mindestabstand:** Mindestabstand zwischen Peaks
 - **Start-/Enddatum:** Zeitraum für die Analyse
 - **Prognosezeitraum:** Länge der Prognose in Tagen
+
+---
+
+## Mögliche zukünftige Erweiterungen
+
+- **Portfolio-Backtesting:** Gleichzeitiges Backtesting mehrerer Aktien/Strategien, Portfolio-Optimierung, Risikomanagement.
+- **Weitere ML-Modelle:** Integration von Transformer, Prophet, XGBoost oder anderen Zeitreihenmodellen.
+- **Live-Daten & Alerts:** Automatisches Nachladen neuer Kurse, E-Mail/Push-Benachrichtigungen bei Signalen.
+- **Order-Simulation:** Realistischere Handelsausführung (Limit/Stop-Orders, Orderbuch-Simulation, Gebührenmodelle).
+- **Erweiterte Visualisierung:** Interaktive Heatmaps, Korrelationsmatrizen, Custom-Reports.
+- **Fundamentaldaten:** Einbindung von Bilanz-, Gewinn- und Wirtschaftsdaten zur Modellverbesserung.
+- **Automatisierte Hyperparameter-Optimierung:** Grid Search, Bayesian Optimization, AutoML.
+- **Explainable AI:** Modellinterpretierbarkeit, Feature-Importances, Shapley-Werte.
+- **Backtest-Visualisierung:** Interaktive Trade-Logs, Trade-by-Trade-Analyse, animierte Equity-Kurven.
+
+
+---

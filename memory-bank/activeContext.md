@@ -28,11 +28,17 @@
   - Parameteranpassung, Aktienliste-Reload, Datenaktualisierung direkt in der App
   - Export als PNG und HTML integriert
   - Alle Tests bestanden, App lauffähig
-
-**Aktueller Fokus:**
 - Phase 7: Export & Sharing
   - Exportfunktion für interaktive Ergebnisse
   - Exportierte Ergebnisse in eigenen Ordner ablegen
+- Phase 8: Test, Stabilisierung & Dokumentation abgeschlossen
+  - Alle Unittests und Integrationstests bestanden
+  - Fehlerbehandlung, Nutzerführung und Dokumentation finalisiert
+  - Troubleshooting, FAQ und Beispiele ergänzt
+  - App ist stabil und bereit für Präsentation/Deployment
+
+**Aktueller Fokus:**
+- Phase 9: Präsentation, Deployment & Ausblick
 
 **Nächste Aufgaben:**
 - Export- und Sharing-Logik prüfen und ggf. erweitern
@@ -53,3 +59,13 @@
 - Jede Änderung muss dokumentiert und getestet werden
 - Datenvalidierung ist ein Kernfeature (später: eigene Phase!)
 - Alle Tests nach Phasen geordnet
+
+
+## Aktueller Fokus (ML/Deep Learning)
+- ML-Phase abgeschlossen: LSTM-Modell, Zeitreihen- und Backtest-Module integriert, alle Tests bestanden
+- src/ml/ und tests/ml/ mit allen Kernmodulen und Unittests
+- Test, Persistenz, Simulation & Reporting erfolgreich umgesetzt
+
+## Nächste Aufgaben (ML)
+- Präsentation und Deployment der ML-Pipeline
+- Erweiterung um weitere Modelle/Features bei Bedarf

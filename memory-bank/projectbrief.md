@@ -24,3 +24,15 @@ Entwicklung eines modularen Python-Tools zur automatisierten Analyse und Visuali
 - Präsentationsreifes, nachvollziehbares Endprodukt
 - Jede Projektphase klar dokumentiert und testbar
 - Bereit für künftige ML-Erweiterung
+
+
+# projectbrief.md
+
+## Ziel (Erweiterung)
+Zusätzlich: ML-basierte Prognosen (insb. LSTM, weitere Zeitreihenmodelle) zur Simulation und Bewertung von Handelsstrategien mit echten Aktienkursen.
+Alle ML-Komponenten sind modular, getestet, und arbeiten ausschließlich mit bereinigten Echtdaten.
+
+## Erweiterte Core Requirements
+- Modularisierte ML-Pipeline (Splits, Feature Engineering, LSTM-Training, Backtest, Reporting)
+- Risikoprofil-Handling und langfristige Out-of-Sample-Simulationen
+- CLI und Dashboard für ML-Modelle & Ergebnisse

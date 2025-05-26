@@ -321,10 +321,16 @@ try:
             - **SMA_20, SMA_50, SMA_200:** Gleitende Durchschnitte (20, 50, 200 Tage)
             - **EMA_12, EMA_26:** Exponentiell gewichtete Durchschnitte
             - **RSI (magenta):** Relative Strength Index (Oszillator, 0-100)
-            - **Bereiche:** Der sichtbare Zeitraum entspricht dem gewählten Analysezeitraum
-            - **Interpretation:**
-                - SMA/EMA zeigen Trendrichtungen
-                - RSI > 70: Überkauft, RSI < 30: Überverkauft
+            - **MACD:** Differenz zweier gleitender Durchschnitte, zeigt Trendwechsel an
+            - **MACD-Signal:** Glättung des MACD, Schnittpunkte liefern Kauf-/Verkaufssignale
+            - **Bollinger-Bänder:** Zwei Linien ober- und unterhalb des Durchschnitts, zeigen Extrembereiche (graue Fläche)
+            - **Farben & Overlays:** Jede Linie/Farbe steht für einen bestimmten Indikator. Die Legende im Plot zeigt, was was ist. Überlagerungen (z.B. graue Flächen) markieren besondere Bereiche wie die Bollinger-Bänder.
+
+            **Interpretation für Einsteiger:**
+            - **SMA/EMA:** Steigende Linien = Aufwärtstrend, fallende = Abwärtstrend.
+            - **MACD:** Schneidet die MACD-Linie die Signallinie von unten nach oben, ist das oft ein Kaufsignal (und umgekehrt).
+            - **Bollinger-Bänder:** Kurs am oberen Band = oft überkauft, am unteren Band = oft überverkauft.
+            - **RSI:** Über 70 = überkauft, unter 30 = überverkauft.
 
             **Performance-Metriken:**
             - **Total Return:** Gesamtrendite über den betrachteten Zeitraum (in Prozent)
@@ -341,6 +347,27 @@ try:
     # --- Tab 4: ML Vorhersagen ---
     with tabs[3]:
         st.header("ML Vorhersagen")
+        with st.expander("ℹ️ Hilfe & Legende", expanded=True):
+            st.markdown("""
+            **ML-Vorhersagen: Hilfe & Legende**
+            - **Was ist ein ML-Modell?**  
+              Ein Machine-Learning-Modell (hier: LSTM) erkennt Muster in historischen Kursdaten und versucht, zukünftige Kurse vorherzusagen.
+            - **Prognosekurve:**  
+              Die rote Linie zeigt die vom Modell vorhergesagten Kurse, die lila Linie die echten Kurse im Testzeitraum.
+            - **Loss-Kurve:**  
+              Zeigt, wie stark sich die Vorhersage des Modells während des Trainings verbessert hat. Je niedriger, desto besser.
+            - **Metriken:**  
+              - **MSE/MAE:** Fehler zwischen Prognose und echtem Kurs (je kleiner, desto besser).
+              - **Sharpe Ratio:** Verhältnis von Rendite zu Risiko (höher = besser).
+              - **Trefferquote:** Wie oft die Richtung der Prognose stimmt.
+              - **CAGR:** Durchschnittliche jährliche Wachstumsrate.
+            - **Modellhandling:**  
+              Modelle und Prognosen werden automatisch gespeichert und geladen. Ein erneutes Training ist nur bei Bedarf nötig.
+            - **Fehlerquellen:**  
+              Zu wenig Daten, fehlerhafte Preisdaten, ungeeignete Parameter. Die App gibt klare Hinweise.
+            - **Wichtiger Hinweis:**  
+              Die Prognose ist experimentell und keine Finanzberatung!
+            """)
         ml_window = st.number_input("LSTM-Fenstergröße (Tage)", min_value=5, max_value=60, value=20, key="ml_window")
         ml_epochs = st.number_input("Trainings-Epochen", min_value=1, max_value=50, value=10, key="ml_epochs")
         ml_dropout = st.slider("Dropout", 0.0, 0.5, 0.2, step=0.05, key="ml_dropout")
@@ -469,45 +496,150 @@ try:
         with col3:
             size = st.number_input("Positionsgröße", min_value=1, max_value=1000, value=1, step=1)
         # --- TA-Strategie: SMA/EMA-Crossover ---
-        df_ta = ta.add_ta_indicators(df_all)
-        ta_signal = (df_ta['SMA_20'] > df_ta['SMA_50']).astype(int)
-        # --- ML-Strategie: Rolling/Walk-Forward-Backtest ---
-        ml_signal = ml_train.generate_ml_signals(df_all, selected_ticker)
-        # --- Backtest-Buttons ---
-        col_bt1, col_bt2 = st.columns(2)
-        with col_bt1:
-            if st.button("TA-Strategie Backtest starten"):
-                ta_report = bt_engine.run_backtest(df_all, ta_signal, strategy_name="ta", commission=commission, slippage=slippage, size=size)
-                st.session_state["ta_report"] = ta_report
-        with col_bt2:
-            if st.button("ML-Strategie Backtest starten"):
-                ml_report = bt_engine.run_backtest(df_all, ml_signal, strategy_name="ml", commission=commission, slippage=slippage, size=size)
-                st.session_state["ml_report"] = ml_report
-        # --- Ergebnisse anzeigen, wenn vorhanden ---
-        if "ta_report" in st.session_state and "ml_report" in st.session_state:
-            st.subheader("Equity-Kurven (Overlay)")
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=st.session_state["ta_report"]["date"], y=st.session_state["ta_report"]["equity"], mode="lines", name="TA-Strategie"))
-            fig.add_trace(go.Scatter(x=st.session_state["ml_report"]["date"], y=st.session_state["ml_report"]["equity"], mode="lines", name="ML-Strategie"))
-            st.plotly_chart(fig, use_container_width=True)
-            # --- Performance-Kennzahlen ---
-            st.subheader("Performance-Kennzahlen")
-            def calc_stats(report):
-                returns = pd.Series(report["equity"]).pct_change().fillna(0)
-                sharpe = returns.mean() / (returns.std() + 1e-9) * (252 ** 0.5)
-                drawdown = (report["equity"] / report["equity"].cummax() - 1).min()
-                cagr = (report["equity"].iloc[-1] / report["equity"].iloc[0]) ** (252/len(report)) - 1
-                return dict(Sharpe=sharpe, Drawdown=drawdown, CAGR=cagr)
-            ta_stats = calc_stats(st.session_state["ta_report"])
-            ml_stats = calc_stats(st.session_state["ml_report"])
-            st.table(pd.DataFrame([ta_stats, ml_stats], index=["TA", "ML"]))
-            # --- Download-Links ---
-            st.subheader("Backtest-Reports Download")
-            ta_csv = f"backtest/reports/ta_backtest.csv"
-            ml_csv = f"backtest/reports/ml_backtest.csv"
-            if os.path.exists(ta_csv):
-                st.download_button("TA-Report (CSV)", open(ta_csv, "rb"), file_name="ta_backtest.csv")
-            if os.path.exists(ml_csv):
-                st.download_button("ML-Report (CSV)", open(ml_csv, "rb"), file_name="ml_backtest.csv")
+        if df_all is None or df_all.empty:
+            st.warning("Warnung: Keine Daten geladen. Bitte wähle einen anderen Ticker oder Zeitraum.")
+        else:
+            st.write("DEBUG: Tab geladen, Buttons sollten sichtbar sein.")
+            df_ta = ta.add_ta_indicators(df_all)
+            ta_signal = (df_ta['SMA_20'] > df_ta['SMA_50']).astype(int)
+            col_bt1, col_bt2 = st.columns(2)
+            with col_bt1:
+                if st.button("TA-Strategie Backtest starten"):
+                    ta_report = bt_engine.run_backtest(df_all, ta_signal, strategy_name="ta", commission=commission, slippage=slippage, size=size)
+                    st.session_state["ta_report"] = ta_report
+            with col_bt2:
+                if st.button("ML-Strategie Backtest starten"):
+                    try:
+                        with st.spinner("Berechne ML-Signale und starte Backtest..."):
+                            ml_signal = ml_train.generate_ml_signals(df_all, selected_ticker)
+                            ml_report = bt_engine.run_backtest(df_all, ml_signal, strategy_name="ml", commission=commission, slippage=slippage, size=size)
+                            st.session_state["ml_report"] = ml_report
+                    except Exception as ml_e:
+                        st.error(f"Fehler beim ML-Backtest: {ml_e}")
+            # --- Ergebnisse anzeigen, wenn vorhanden ---
+            if "ta_report" in st.session_state or "ml_report" in st.session_state:
+                st.subheader("Equity-Kurven (Overlay, normiert)")
+                # Zeitraum filtern
+                df_period = df_all[(df_all.index.date >= start_date) & (df_all.index.date <= end_date)]
+                idx = df_period.index
+                def norm_equity(equity):
+                    return equity / equity[0] if len(equity) > 0 else equity
+                # TA-Strategie (Index-Handling)
+                ta_equity = None
+                if "ta_report" in st.session_state:
+                    ta_rep = st.session_state["ta_report"]
+                    ta_dates = pd.to_datetime(ta_rep["date"])
+                    ta_eq = pd.Series(ta_rep["equity"].values, index=ta_dates)
+                    ta_eq = ta_eq.reindex(idx, method="ffill") if not ta_eq.index.equals(idx) else ta_eq
+                    if ta_eq.isnull().all():
+                        st.warning("Keine Überlappung im Zeitraum für TA-Strategie!")
+                    else:
+                        ta_equity = norm_equity(ta_eq.values)
+                # ML-Strategie (Index-Handling)
+                ml_equity = None
+                if "ml_report" in st.session_state:
+                    ml_rep = st.session_state["ml_report"]
+                    ml_dates = pd.to_datetime(ml_rep["date"])
+                    ml_eq = pd.Series(ml_rep["equity"].values, index=ml_dates)
+                    ml_eq = ml_eq.reindex(idx, method="ffill") if not ml_eq.index.equals(idx) else ml_eq
+                    if ml_eq.isnull().all():
+                        st.warning("Keine Überlappung im Zeitraum für ML-Strategie!")
+                    else:
+                        ml_equity = norm_equity(ml_eq.values)
+                fig = go.Figure()
+                if ta_equity is not None:
+                    fig.add_trace(go.Scatter(x=idx, y=ta_equity, mode="lines", name="TA-Strategie", line=dict(color="blue")))
+                if ml_equity is not None:
+                    fig.add_trace(go.Scatter(x=idx, y=ml_equity, mode="lines", name="ML-Strategie", line=dict(color="red")))
+                fig.update_layout(legend=dict(orientation="h"))
+                st.plotly_chart(fig, use_container_width=True)
+                # --- Drawdown-Plot (normiert) ---
+                st.subheader("Drawdown-Kurven (Overlay, normiert)")
+                fig_dd = go.Figure()
+                if ta_equity is not None:
+                    ta_running_max = np.maximum.accumulate(ta_equity)
+                    ta_drawdown = (ta_equity - ta_running_max) / ta_running_max
+                    fig_dd.add_trace(go.Scatter(x=idx, y=ta_drawdown, mode="lines", name="TA Drawdown", line=dict(color="blue")))
+                if ml_equity is not None:
+                    ml_running_max = np.maximum.accumulate(ml_equity)
+                    ml_drawdown = (ml_equity - ml_running_max) / ml_running_max
+                    fig_dd.add_trace(go.Scatter(x=idx, y=ml_drawdown, mode="lines", name="ML Drawdown", line=dict(color="red")))
+                fig_dd.update_layout(legend=dict(orientation="h"))
+                st.plotly_chart(fig_dd, use_container_width=True)
+                # --- Kursverlauf vs. ML-Prognose (Testzeitraum) ---
+                st.subheader("Kursverlauf vs. ML-Prognose (Testzeitraum)")
+                try:
+                    n = len(df_all)
+                    val_end = int(n * 0.85)
+                    test_index = df_all.index[val_end:]
+                    true_prices = df_all["Close"].values[val_end:]
+                    ml_model = ml_train.load_lstm_model(selected_ticker)
+                    if ml_model is not None:
+                        model, scaler, _ = ml_model
+                        close_scaled = scaler.transform(df_all["Close"].values.reshape(-1, 1)).flatten()
+                        start_price = df_all["Close"].values[val_end-1] if val_end > 0 else df_all["Close"].values[0]
+                        preds = ml_train.predict_lstm(model, scaler, close_scaled, window=20, steps=len(true_prices), start_price=start_price, return_prices=True)
+                        # Sicherstellen, dass preds und true_prices auf derselben Skala liegen
+                        if np.abs(np.mean(preds) - np.mean(true_prices)) > 0.5 * np.mean(true_prices):
+                            st.warning("Achtung: ML-Prognose und echter Kurs scheinen auf unterschiedlichen Skalen zu liegen!")
+                        fig_pred = go.Figure()
+                        fig_pred.add_trace(go.Scatter(x=test_index, y=true_prices, mode="lines", name="Echt (Test)", line=dict(color="#a020f0")))
+                        fig_pred.add_trace(go.Scatter(x=test_index, y=preds, mode="lines", name="ML-Prognose", line=dict(color="red", dash="dash")))
+                        fig_pred.update_layout(title="Kursverlauf vs. ML-Prognose (Testzeitraum)", height=400)
+                        st.plotly_chart(fig_pred, use_container_width=True)
+                    else:
+                        st.info("Keine ML-Prognose verfügbar.")
+                except Exception as pred_e:
+                    st.warning(f"Konnte Kurs/Prognose-Vergleich nicht anzeigen: {pred_e}")
+                # --- Performance-Kennzahlen (normiert) ---
+                st.subheader("Performance-Kennzahlen & Download (normiert)")
+                def calc_stats(equity, name):
+                    returns = pd.Series(equity).pct_change().fillna(0)
+                    sharpe = returns.mean() / (returns.std() + 1e-9) * (252 ** 0.5)
+                    drawdown = (equity / np.maximum.accumulate(equity) - 1).min()
+                    cagr = (equity[-1] / equity[0]) ** (252/len(equity)) - 1 if len(equity) > 1 else 0
+                    total_return = equity[-1] / equity[0] - 1 if len(equity) > 1 else 0
+                    return dict(Name=name, Sharpe=sharpe, Drawdown=drawdown, CAGR=cagr, TotalReturn=total_return)
+                stats = []
+                if ta_equity is not None:
+                    stats.append(calc_stats(ta_equity, "TA-Strategie"))
+                if ml_equity is not None:
+                    stats.append(calc_stats(ml_equity, "ML-Strategie"))
+                st.table(pd.DataFrame(stats).set_index("Name"))
+                # Download-Buttons
+                ta_csv = f"backtest/reports/ta_backtest.csv"
+                ml_csv = f"backtest/reports/ml_backtest.csv"
+                if os.path.exists(ta_csv):
+                    st.download_button("TA-Report (CSV)", open(ta_csv, "rb"), file_name="ta_backtest.csv")
+                if os.path.exists(ml_csv):
+                    st.download_button("ML-Report (CSV)", open(ml_csv, "rb"), file_name="ml_backtest.csv")
+                # --- Hilfe & Legende ---
+                with st.expander("ℹ️ Hilfe & Legende", expanded=False):
+                    st.markdown("""
+                    **Equity-Kurven (Overlay, normiert):**
+                    - **Echter Kurs (Buy&Hold, lila):** Entwicklung des echten Aktienkurses (Buy&Hold-Strategie), Startwert = 1.0
+                    - **TA-Strategie (blau):** Equity-Kurve der technischen Strategie, Startwert = 1.0
+                    - **ML-Strategie (rot):** Equity-Kurve der ML-Strategie, Startwert = 1.0
+
+                    **Drawdown-Kurven (normiert):**
+                    - Zeigen den maximalen Kapitalrückgang vom jeweiligen Höchststand (negativ, z.B. -0.2 = -20%)
+
+                    **Kursverlauf vs. ML-Prognose (Testzeitraum):**
+                    - **Echt (Test, lila):** Tatsächlicher Kursverlauf im Testzeitraum.
+                    - **ML-Prognose (rot, gestrichelt):** Vom LSTM-Modell vorhergesagte Kurse für denselben Zeitraum.
+
+                    **Performance-Kennzahlen:**
+                    - **Sharpe:** Rendite-Risiko-Verhältnis (je höher, desto besser)
+                    - **Drawdown:** Maximaler Kapitalrückgang
+                    - **CAGR:** Durchschnittliche jährliche Wachstumsrate
+                    - **TotalReturn:** Gesamtrendite über den Zeitraum
+
+                    **Interpretation:**
+                    - Je näher die Strategie-Kurven an der lila Linie, desto besser folgt die Strategie dem echten Kurs.
+                    - Ein hoher Drawdown bedeutet ein hohes Risiko.
+                    - Die Download-Buttons liefern die vollständigen Backtest-Reports als CSV.
+                    """)
+            # Fallback falls Buttons nicht erscheinen
+            st.write("Falls die Buttons nicht sichtbar sind, ist ein Fehler im Tab-Workflow aufgetreten.")
 except Exception as e:
     st.error(f"Fehler im Haupt-Workflow: {e}") 

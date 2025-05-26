@@ -20,3 +20,10 @@ Um Aktienanalysen per Elliott-Wellen-Methode verlässlich, nachvollziehbar und e
 - Fehler werden klar gemeldet und automatisch (soweit möglich) korrigiert
 - Live-GUI, Export, anpassbare Parameter
 - Reproduzierbarkeit und Robustheit
+
+
+## Neue Nutzerziele (ML)
+- Ermöglicht ML-gestützte Prognosen (z. B. nächste Kursrichtung) auf validen Echtdaten
+- Erleichtert Backtests und Strategie-Simulationen (inkl. Vergleich TA vs. ML, verschiedene Risikoprofile)
+- Vollständig Out-of-Sample-getestete Strategien
+- Alle ML-Schritte sind einheitlich dokumentiert, getestet, nachvollziehbar

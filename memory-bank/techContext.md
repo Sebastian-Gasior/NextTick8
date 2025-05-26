@@ -21,3 +21,13 @@
 - Keine Demo-Daten, nur Yahoo Finance
 - Tests und Doku für jede Phase obligatorisch
 - Nur Markdown für Doku
+
+
+## Erweiterte Technologien ML
+
+- tensorflow/keras (LSTM-Modelle)
+- scikit-learn (Scaler, Metriken, Pipeline)
+- joblib (Speichern/Laden von Scaler, Modellen)
+- pandas/numpy (Feature Engineering, Daten-Pipeline)
+- pytest (Unittests für alle ML-Phasen)
+- Echte, validierte Kursdaten (data/cleaned/)
